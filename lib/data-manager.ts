@@ -19,17 +19,18 @@ export function defaultData(): BookmarkDataType {
 }
 
 export function saveToLocalStorage(data: BookmarkDataType): void {
-  if (!window) {
+  if (typeof window === 'undefined') {
     console.warn('Window object not found');
     return;
   }
-  window?.localStorage.setItem('bookmarkData', saveDataToJson(data));
+
+  localStorage.setItem('bookmarkData', saveDataToJson(data));
 }
 
 export function readFromLocalStorage(): BookmarkDataType {
   let parsedData = defaultData();
-  if (window) {
-    const data = window.localStorage.getItem('bookmarkData');
+  if (typeof window !== 'undefined') {
+    const data = localStorage.getItem('bookmarkData');
     if (data) {
       const savedData = loadDataFromJson(data);
       if (savedData) {

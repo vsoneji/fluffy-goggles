@@ -146,3 +146,8 @@ td {
     @apply bg-background text-foreground;
   }
 }
+
+.draggable {
+  top: auto !important;
+  left: auto !important;
+}

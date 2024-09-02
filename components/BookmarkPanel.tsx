@@ -1,9 +1,9 @@
-import { BookmarkPanelType } from '@/types/schema';
+import { BookmarkPanelTypeWithId } from '@/types/schema';
 import { Bookmark } from './Bookmark';
 import { EditPanelDialog } from './EditPanelDialog';
 
-interface IBookmarkPanelProps extends BookmarkPanelType {
-  onChange: (orig: BookmarkPanelType, changed: BookmarkPanelType) => void;
+interface IBookmarkPanelProps extends BookmarkPanelTypeWithId {
+  onChange: (orig: BookmarkPanelTypeWithId, changed: BookmarkPanelTypeWithId) => void;
 }
 
 export const BookmarkPanel: React.FunctionComponent<IBookmarkPanelProps> = props => {

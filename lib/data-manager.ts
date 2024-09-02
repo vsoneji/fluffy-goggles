@@ -1,21 +1,21 @@
-import { BookmarkDataType, BookmarkDataSchema } from '@/types/schema';
+import { BookmarkDataType, BookmarkDataSchema, BookmarkDataTypeWithId } from '@/types/schema';
 import * as defaultDataJson from '@/types/sample-data.json';
 
-export function loadDataFromJson(json: string): BookmarkDataType | undefined {
+function loadDataFromJson(json: string): BookmarkDataTypeWithId | undefined {
   const { success, data } = BookmarkDataSchema.safeParse(json);
   if (!success) {
     console.warn('Invalid JSON data');
     return undefined;
   }
-  return data as BookmarkDataType;
+  return setIdsForData(data);
 }
 
-export function saveDataToJson(data: BookmarkDataType): string {
-  return JSON.stringify(data, null, 2);
+function saveDataToJson(data: BookmarkDataType): string {
+  return JSON.stringify(setIdsForData(data), null, 2);
 }
 
-export function defaultData(): BookmarkDataType {
-  return defaultDataJson as BookmarkDataType;
+function defaultData(): BookmarkDataTypeWithId {
+  return setIdsForData(defaultDataJson);
 }
 
 export function saveToLocalStorage(data: BookmarkDataType): void {
@@ -27,7 +27,7 @@ export function saveToLocalStorage(data: BookmarkDataType): void {
   localStorage.setItem('bookmarkData', saveDataToJson(data));
 }
 
-export function readFromLocalStorage(): BookmarkDataType {
+export function readFromLocalStorage(): BookmarkDataTypeWithId {
   let parsedData = defaultData();
   if (typeof window !== 'undefined') {
     const data = localStorage.getItem('bookmarkData');
@@ -39,4 +39,14 @@ export function readFromLocalStorage(): BookmarkDataType {
     }
   }
   return parsedData;
+}
+
+function setIdsForData(data: BookmarkDataType): BookmarkDataTypeWithId {
+  const panels = data.panels.map((panel, pIndex) => {
+    const bookmarks = panel.bookmarks.map((bookmark, bIndex) => {
+      return { ...bookmark, id: `p${pIndex}-b${bIndex}` };
+    });
+    return { ...panel, bookmarks, id: `p${pIndex}` };
+  });
+  return { ...data, panels };
 }

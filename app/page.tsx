@@ -1,20 +1,14 @@
 'use client';
 
 import { BookmarkPanel } from '@/components/BookmarkPanel';
-import { EditPanelDialog } from '@/components/EditPanelDialog';
 import { SettingsDialog } from '@/components/SettingsDialog';
-import { defaultData, readFromLocalStorage } from '@/lib/data-manager';
+import { readFromLocalStorage } from '@/lib/data-manager';
 import { chunkArray } from '@/lib/helpers';
-import { BookmarkDataType } from '@/types/schema';
 import { useState } from 'react';
 export default function Home() {
-  const [data, setData] = useState<BookmarkDataType>(readFromLocalStorage());
-
-  const [modalState, setModalState] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  const [data, setData] = useState(readFromLocalStorage());
 
   const chunkRows = chunkArray(data.panels, 5);
-  let sequenceNumber = 0;
   const colorsArrays = [
     ['cellColorA', 'cellColorB', 'cellColorC'],
     ['cellColorC', 'cellColorA', 'cellColorB'],
@@ -24,7 +18,6 @@ export default function Home() {
       <h1>
         Bookmarks App &nbsp;
         <SettingsDialog />
-        <EditPanelDialog panel={data.panels[0]} />
       </h1>
       <table>
         <tbody>

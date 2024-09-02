@@ -11,19 +11,27 @@ import {
 } from '@/components/ui/dialog';
 import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { BookmarkPanelType, BookmarkType } from '@/types/schema';
+import { BookmarkPanelTypeWithId, BookmarkTypeWithId } from '@/types/schema';
 import { useState } from 'react';
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 
 interface EditPanelDialogProps {
-  panel: BookmarkPanelType;
-}
-
-interface TableRow extends BookmarkType {
-  id: number;
+  panel: BookmarkPanelTypeWithId;
 }
 
 export const EditPanelDialog: React.FunctionComponent<EditPanelDialogProps> = ({ panel }) => {
-  const [data, setData] = useState<TableRow[]>(panel.bookmarks.map((bookmark, index) => ({ ...bookmark, id: index })));
+  const [data, setData] = useState(panel.bookmarks);
+
+  const handleDragEnd = (result: any) => {
+    if (!result.destination) {
+      return;
+    }
+    const items: BookmarkTypeWithId[] = Array.from(data);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    // Update your state with the new order
+    setData(items);
+  };
 
   return (
     <Dialog>
@@ -35,13 +43,32 @@ export const EditPanelDialog: React.FunctionComponent<EditPanelDialogProps> = ({
           <DialogTitle>Edit panel</DialogTitle>
           <DialogDescription>Edit the bookmkar panel.</DialogDescription>
         </DialogHeader>
-        <div className="grid flex-1 gap-2">
-          <span className="panelHeading">{panel.label}</span>
+        <span className="panelHeading">{panel.label}</span>
 
-          {data.map(row => (
-            <p key={row.id}>{row.label}</p>
-          ))}
-        </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId={panel.id}>
+            {provided => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {data.map((row, index) => (
+                  <Draggable draggableId={row.id} index={index} key={index}>
+                    {provided => (
+                      <div
+                        className="border border-input bg-background hover:bg-accent hover:text-accent-foreground draggable"
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        {row.label}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
             <Button type="button" variant="default">

@@ -4,6 +4,15 @@
 
 - [Lucide Icons](https://lucide.dev/icons/)
 - [shadcn-ui](https://ui.shadcn.com/docs)
+- [How to Test and Run GitHub Actions Locally](https://earthly.dev/blog/using-github-actions-locally/)
+
+## Running GitHub actions locally
+
+```powershell
+act --list
+act --job analyze --dryrun
+act --job build --dryrun
+```
 
 # Boilerplate Readme
 

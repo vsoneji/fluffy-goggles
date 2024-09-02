@@ -4,6 +4,7 @@ import { EditPanelDialog } from './EditPanelDialog';
 
 interface IBookmarkPanelProps extends BookmarkPanelTypeWithId {
   onChange: (orig: BookmarkPanelTypeWithId, changed: BookmarkPanelTypeWithId) => void;
+  editing: boolean;
 }
 
 export const BookmarkPanel: React.FunctionComponent<IBookmarkPanelProps> = props => {
@@ -13,9 +14,11 @@ export const BookmarkPanel: React.FunctionComponent<IBookmarkPanelProps> = props
         <span className="panelHeading" style={{ width: '80%' }}>
           {props.label}
         </span>
-        <span style={{ alignSelf: 'right' }}>
-          <EditPanelDialog panel={props} />
-        </span>
+        {!props.editing ? null : (
+          <span style={{ alignSelf: 'right' }}>
+            <EditPanelDialog panel={props} />
+          </span>
+        )}
       </div>
 
       <ul className="bookmarkList">

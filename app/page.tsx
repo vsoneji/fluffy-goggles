@@ -2,22 +2,32 @@
 
 import { BookmarkPanel } from '@/components/BookmarkPanel';
 import { SettingsDialog } from '@/components/SettingsDialog';
+import { Toggle } from '@/components/ui/toggle';
 import { readFromLocalStorage } from '@/lib/data-manager';
 import { chunkArray } from '@/lib/helpers';
+import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 export default function Home() {
   const [data, setData] = useState(readFromLocalStorage());
+  const [editing, setEditing] = useState(false);
 
   const chunkRows = chunkArray(data.panels, 5);
   const colorsArrays = [
     ['cellColorA', 'cellColorB', 'cellColorC'],
     ['cellColorC', 'cellColorA', 'cellColorB'],
   ];
+  function toggleEditing(pressed: boolean): void {
+    setEditing(pressed);
+  }
+
   return (
     <div>
       <h1>
         Bookmarks App &nbsp;
         <SettingsDialog />
+        <Toggle size="sm" variant="outline" onPressedChange={toggleEditing}>
+          <Pencil className="h-4 w-4" />
+        </Toggle>
       </h1>
       <table>
         <tbody>
@@ -33,6 +43,7 @@ export default function Home() {
                     <td key={j} className={cellStyle}>
                       <BookmarkPanel
                         {...panel}
+                        editing={editing}
                         onChange={(orig, changed) => {
                           console.log('Panel changed', orig, changed);
                         }}

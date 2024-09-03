@@ -1,30 +1,37 @@
-import { BookmarkDataType, BookmarkDataSchema, BookmarkDataTypeWithId } from '@/types/schema';
-import * as defaultDataJson from '@/types/sample-data.json';
+import { BookmarkDataType, BookmarkDataSchema, BookmarkDataTypeWithId, BookmarkDataSchemaWithId } from '@/types/schema';
+import { defaultBookmarksData } from '@/types/defaultData';
 
 function loadDataFromJson(json: string): BookmarkDataTypeWithId | undefined {
-  const { success, data } = BookmarkDataSchema.safeParse(json);
-  if (!success) {
+  const parsedData = JSON.parse(json);
+  if (typeof parsedData !== 'object') {
+    throw new Error('Invalid JSON data');
+  }
+
+  try {
+    return BookmarkDataSchemaWithId.parse(parsedData);
+  } catch (e) {
     console.warn('Invalid JSON data');
+    console.warn(e);
     return undefined;
   }
-  return setIdsForData(data);
 }
 
-function saveDataToJson(data: BookmarkDataType): string {
-  return JSON.stringify(setIdsForData(data), null, 2);
+function saveDataToJson(data: BookmarkDataTypeWithId): string {
+  return JSON.stringify(data);
 }
 
 function defaultData(): BookmarkDataTypeWithId {
-  return setIdsForData(defaultDataJson);
+  return setIdsForData(defaultBookmarksData);
 }
 
-export function saveToLocalStorage(data: BookmarkDataType): void {
+export function saveToLocalStorage(data: BookmarkDataTypeWithId): void {
   if (typeof window === 'undefined') {
     console.warn('Window object not found');
     return;
   }
-
-  localStorage.setItem('bookmarkData', saveDataToJson(data));
+  // TODO: figure out the correct way to use localStorage in Next.js
+  console.log(`NOT Saving to local storage`);
+  // localStorage.setItem('bookmarkData', saveDataToJson(data));
 }
 
 export function readFromLocalStorage(): BookmarkDataTypeWithId {

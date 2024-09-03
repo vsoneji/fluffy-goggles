@@ -3,10 +3,11 @@
 import { BookmarkPanel } from '@/components/BookmarkPanel';
 import { SettingsDialog } from '@/components/SettingsDialog';
 import { Toggle } from '@/components/ui/toggle';
-import { readFromLocalStorage } from '@/lib/data-manager';
+import { readFromLocalStorage, saveToLocalStorage } from '@/lib/data-manager';
 import { chunkArray } from '@/lib/helpers';
+import { BookmarkPanelTypeWithId } from '@/types/schema';
 import { Pencil } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 export default function Home() {
   const [data, setData] = useState(readFromLocalStorage());
   const [editing, setEditing] = useState(false);
@@ -19,6 +20,29 @@ export default function Home() {
   function toggleEditing(pressed: boolean): void {
     setEditing(pressed);
   }
+  function showData(pressed: boolean): void {
+    console.log(data);
+  }
+
+  const handlePanelChange = (orig: BookmarkPanelTypeWithId, changed: BookmarkPanelTypeWithId) => {
+    console.log('Panel changed', orig, changed);
+
+    const newPanels = data.panels.map(panel => {
+      if (panel.id === orig.id) {
+        return changed;
+      }
+      return panel;
+    });
+
+    const newData = { title: data.title, columns: data.columns, panels: newPanels };
+
+    console.log('New data', newData);
+    setData(newData);
+  };
+
+  useEffect(() => {
+    saveToLocalStorage(data);
+  });
 
   return (
     <div>
@@ -26,6 +50,9 @@ export default function Home() {
         Bookmarks App &nbsp;
         <SettingsDialog />
         <Toggle size="sm" variant="outline" onPressedChange={toggleEditing}>
+          <Pencil className="h-4 w-4" />
+        </Toggle>
+        <Toggle size="sm" variant="outline" onPressedChange={showData}>
           <Pencil className="h-4 w-4" />
         </Toggle>
       </h1>
@@ -41,13 +68,7 @@ export default function Home() {
 
                   return (
                     <td key={j} className={cellStyle}>
-                      <BookmarkPanel
-                        {...panel}
-                        editing={editing}
-                        onChange={(orig, changed) => {
-                          console.log('Panel changed', orig, changed);
-                        }}
-                      />
+                      <BookmarkPanel {...panel} editing={editing} onChange={handlePanelChange} />
                     </td>
                   );
                 })}

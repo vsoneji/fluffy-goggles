@@ -49,6 +49,10 @@ a:hover {
   padding-top: 5px;
 }
 
+.noWrap {
+  display: inline-block;
+}
+
 .bookmarkList {
   list-style-type: none;
 }

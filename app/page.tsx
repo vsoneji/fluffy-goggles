@@ -6,7 +6,7 @@ import { Toggle } from '@/components/ui/toggle';
 import { readFromLocalStorage, saveToLocalStorage } from '@/lib/data-manager';
 import { chunkArray } from '@/lib/helpers';
 import { BookmarkPanelTypeWithId } from '@/types/schema';
-import { Pencil } from 'lucide-react';
+import { Bug, Pencil } from 'lucide-react';
 import { useEffect, useState } from 'react';
 export default function Home() {
   const [data, setData] = useState(readFromLocalStorage());
@@ -53,7 +53,7 @@ export default function Home() {
           <Pencil className="h-4 w-4" />
         </Toggle>
         <Toggle size="sm" variant="outline" onPressedChange={showData}>
-          <Pencil className="h-4 w-4" />
+          <Bug className="h-4 w-4" />
         </Toggle>
       </h1>
       <table>
